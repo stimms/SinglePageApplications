@@ -1,0 +1,12 @@
+﻿@model IQueryable<FlaskList.Models.Flask>
+@{
+    ViewBag.Title = "Index";
+}
+
+<script type="text/javascript">
+    var model = @{new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(Model.ToList());};
+
+</script>
+
+<h2>Index</h2>
+
