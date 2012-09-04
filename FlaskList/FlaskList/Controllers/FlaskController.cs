@@ -15,7 +15,14 @@ namespace FlaskList.Controllers
 
         public ActionResult Index()
         {
-            return View(_session.Query<Flask>());
+            var flasks = _session.Query<Flask>().ToList(); 
+            return View(flasks);
+        }
+
+        public ActionResult Add(Flask flask)
+        {
+            _session.Store(flask);
+            return Json(_session.Query<Flask>().Count());
         }
 
         #region Database stuff

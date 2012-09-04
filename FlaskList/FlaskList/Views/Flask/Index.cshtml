@@ -1,12 +1,26 @@
-﻿@model IQueryable<FlaskList.Models.Flask>
+﻿@model IEnumerable<FlaskList.Models.Flask>
 @{
     ViewBag.Title = "Index";
 }
 
-<script type="text/javascript">
-    var model = @{new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(Model.ToList());};
 
+
+<h2>Flasks!</h2>
+
+<span class="psuedoLink">Add Flask</span>
+
+@section Scripts {
+    <script type="text/javascript">
+        //var model = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(Model))
+
+        function AddFlask() {
+            $.post('@Url.Content("~/Flask/Add")', { name: "Thermos" });
+    }
+
+    $(function () {
+        $(".psuedoLink").click(AddFlask);
+    });
 </script>
 
-<h2>Index</h2>
+}
 
