@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using Raven.Client;
 using System.Web.Mvc;
 using FlaskList.Models;
-using Raven.Client;
-using Raven.Client.Document;
 using Raven.Client.Embedded;
+using System.Collections.Generic;
 
 namespace FlaskList.Controllers
 {
@@ -23,6 +21,12 @@ namespace FlaskList.Controllers
         {
             _session.Store(flask);
             return Json(_session.Query<Flask>().Count());
+        }
+
+        public ActionResult Delete(Guid id)
+        {
+            _session.Delete(_session.Load<Flask>(id));
+            return new EmptyResult();
         }
 
         #region Database stuff

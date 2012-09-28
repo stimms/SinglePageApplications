@@ -7,20 +7,40 @@
 
 <h2>Flasks!</h2>
 
-<span class="psuedoLink">Add Flask</span>
+<span class="addFlask psuedoLink">Add Flask</span>
+
+<table id="flaskList" data-bind="template: { name: 'flaskTemplate', foreach: flasks}" >
+</table>
+
 
 @section Scripts {
     <script type="text/javascript">
-        //var model = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(Model))
+        var model = new Object();
+        model.flasks = ko.observableArray(@Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(Model)));
 
         function AddFlask() {
             $.post('@Url.Content("~/Flask/Add")', { name: "Thermos" });
-    }
+        }
 
-    $(function () {
-        $(".psuedoLink").click(AddFlask);
-    });
-</script>
+        function DeleteFlask()
+        {
+            var flaskIdToDelete = $(this).attr("flaskId");
+            model.flasks.remove(function (item) { return item.Id == flaskIdToDelete});
+            $.post('@Url.Content("~/Flask/Delete")', { id: flaskIdToDelete }, function(){ $(this).slideToggle(); });
+        }
 
+        $(function () {
+            $(".addFlask").click(AddFlask);
+            $(".deleteFlask").live("click", DeleteFlask);
+
+            ko.applyBindings(model);
+        });
+    </script>
+    <script type="text/html" id="flaskTemplate">
+        <tr>
+            <td data-bind="text: Name"></td>
+            <td><span class="deleteFlask pseudoLink" data-bind="attr: { flaskId: Id}">Delete</span></td>
+        </tr>
+    </script>
 }
 
