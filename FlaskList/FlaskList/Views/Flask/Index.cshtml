@@ -7,32 +7,48 @@
 
 <h2>Flasks!</h2>
 
-<span class="addFlask psuedoLink">Add Flask</span>
+<span class="addFlask pseudoLink">Add Flask</span>
 
-<table id="flaskList" data-bind="template: { name: 'flaskTemplate', foreach: flasks}" >
-</table>
+<div data-bind="visible: !addMode()">
+    <h2>Items</h2>
+    <table id="flaskList" data-bind="template: { name: 'flaskTemplate', foreach: flasks}">
+    </table>
+</div>
+
+<div data-bind="visible: addMode">
+    <h2>Add Flask</h2>
+    <input id="flaskName" />
+    <input type="button" value="Add" id="AddFlaskButton"/>
+</div>
 
 
 @section Scripts {
     <script type="text/javascript">
         var model = new Object();
+        model.addMode = ko.observable(false);
         model.flasks = ko.observableArray(@Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(Model)));
 
-        function AddFlask() {
-            $.post('@Url.Content("~/Flask/Add")', { name: "Thermos" });
+        function SwitchToAddMode() {
+            model.addMode(true);
         }
 
-        function DeleteFlask()
-        {
+        function AddFlask() {
+            var toAdd = { Name: $("#flaskName").val(), Id: GUID() };
+            model.flasks.push(toAdd);
+            model.addMode(false);
+            $.post('@Url.Content("~/Flask/Add")', toAdd);
+        }
+
+        function DeleteFlask() {
             var flaskIdToDelete = $(this).attr("flaskId");
-            model.flasks.remove(function (item) { return item.Id == flaskIdToDelete});
-            $.post('@Url.Content("~/Flask/Delete")', { id: flaskIdToDelete }, function(){ $(this).slideToggle(); });
+            model.flasks.remove(function (item) { return item.Id == flaskIdToDelete });
+            $.post('@Url.Content("~/Flask/Delete")', { id: flaskIdToDelete });
         }
 
         $(function () {
-            $(".addFlask").click(AddFlask);
+            $(".addFlask").click(SwitchToAddMode);
             $(".deleteFlask").live("click", DeleteFlask);
-
+            $("#AddFlaskButton").click(AddFlask);
             ko.applyBindings(model);
         });
     </script>
